@@ -641,6 +641,9 @@ class EnhancedChatbotV2:
                 model_info = self._get_model_info(model)
                 if model_info:
                     return f"The {model} is {model_info.get('description', 'a Porsche model')}. Key features include {', '.join(model_info.get('features', []))}."
+            else:
+                # If no specific model is mentioned, return general model information
+                return f"Porsche offers several models including: {', '.join(self.models_data.keys())}. Each model has unique features and specifications. Would you like to know more about a specific model?"
         
         elif intent == "pricing_finance_query":
             model = next((e["text"] for e in entities if e["type"] == "model"), None)
@@ -698,9 +701,21 @@ class EnhancedChatbotV2:
         """Load QA data from all JSON files"""
         qa_data = {}
         
-        # Load model information
-        for model, info in self.models_data.items():
-            qa_data.update(self._create_model_qa(model, info))
+        # Load model information first
+        if self.models_data:
+            # Add general model list question
+            qa_data["What models does Porsche offer?"] = {
+                "answer": f"Porsche offers several models including: {', '.join(self.models_data.keys())}. Each model has unique features and specifications.",
+                "related_questions": [
+                    "What is the price range for Porsche models?",
+                    "Where can I find a dealership?",
+                    "How do I schedule a test drive?"
+                ]
+            }
+            
+            # Add model-specific questions
+            for model, info in self.models_data.items():
+                qa_data.update(self._create_model_qa(model, info))
         
         # Load dealership information
         for dealer in self.dealerships_data.get('dealerships', []):
@@ -725,6 +740,17 @@ class EnhancedChatbotV2:
             ]
         }
         
+        # Model variants
+        if 'variants' in info:
+            qa_pairs[f"What variants of the {model} are available?"] = {
+                "answer": f"The {model} is available in the following variants: {', '.join(info['variants'])}.",
+                "related_questions": [
+                    f"What are the differences between {model} variants?",
+                    f"What is the price range for {model} variants?",
+                    f"Which {model} variant is best for me?"
+                ]
+            }
+        
         # Price information
         if 'pricing' in info:
             qa_pairs[f"What is the price of the {model}?"] = {
@@ -744,6 +770,28 @@ class EnhancedChatbotV2:
                     f"How does the {model} perform?",
                     f"What is the fuel efficiency of the {model}?",
                     f"What is the top speed of the {model}?"
+                ]
+            }
+        
+        # Features
+        if 'features' in info:
+            qa_pairs[f"What features does the {model} have?"] = {
+                "answer": f"The {model} comes with these features: {', '.join(info['features'])}.",
+                "related_questions": [
+                    f"What safety features does the {model} have?",
+                    f"What technology features are available in the {model}?",
+                    f"Can I customize the {model}?"
+                ]
+            }
+        
+        # Colors
+        if 'colors' in info:
+            qa_pairs[f"What colors are available for the {model}?"] = {
+                "answer": f"The {model} is available in these colors: {', '.join(info['colors'])}.",
+                "related_questions": [
+                    f"Can I get a custom color for the {model}?",
+                    f"What is the most popular color for the {model}?",
+                    f"Are there any special edition colors for the {model}?"
                 ]
             }
         
