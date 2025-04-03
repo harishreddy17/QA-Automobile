@@ -1,0 +1,91 @@
+{
+    "dealerships": [
+        {
+            "name": "Porsche Downtown",
+            "location": "New York, NY",
+            "address": "123 Park Avenue",
+            "phone": "(212) 555-0123",
+            "services": [
+                "Sales",
+                "Service",
+                "Parts",
+                "Test Drives",
+                "Virtual Tours"
+            ],
+            "hours": {
+                "weekdays": "9:00 AM - 8:00 PM",
+                "weekends": "10:00 AM - 6:00 PM"
+            }
+        },
+        {
+            "name": "Porsche Beverly Hills",
+            "location": "Beverly Hills, CA",
+            "address": "456 Rodeo Drive",
+            "phone": "(310) 555-0456",
+            "services": [
+                "Sales",
+                "Service",
+                "Parts",
+                "Test Drives",
+                "Virtual Tours",
+                "Performance Center"
+            ],
+            "hours": {
+                "weekdays": "9:00 AM - 8:00 PM",
+                "weekends": "10:00 AM - 6:00 PM"
+            }
+        }
+    ],
+    "service_centers": [
+        {
+            "name": "Porsche Service Center",
+            "location": "Los Angeles, CA",
+            "address": "789 Sunset Boulevard",
+            "phone": "(323) 555-0789",
+            "services": [
+                "Maintenance",
+                "Repairs",
+                "Diagnostics",
+                "Parts",
+                "Warranty Service"
+            ],
+            "hours": {
+                "weekdays": "8:00 AM - 6:00 PM",
+                "weekends": "Closed"
+            }
+        }
+    ],
+    "test_drive": {
+        "requirements": [
+            "Valid driver's license",
+            "Insurance information",
+            "Appointment confirmation"
+        ],
+        "duration": "30 minutes",
+        "booking_methods": [
+            "Online booking",
+            "Phone call",
+            "In-person"
+        ]
+    },
+    "warranty": {
+        "new_vehicle": {
+            "duration": "4 years/50,000 miles",
+            "coverage": [
+                "Bumper-to-bumper",
+                "Powertrain",
+                "Roadside assistance",
+                "Corrosion protection"
+            ]
+        },
+        "certified_pre_owned": {
+            "duration": "2 years/unlimited miles",
+            "coverage": [
+                "Comprehensive inspection",
+                "Warranty transfer",
+                "Roadside assistance",
+                "Corrosion protection"
+            ]
+        }
+    }
+} 

@@ -1,0 +1,107 @@
+{
+    "911": {
+        "description": "The iconic Porsche 911 is a high-performance sports car",
+        "variants": ["Carrera", "S", "4S", "GTS", "Turbo", "GT3", "GT4", "RS", "Targa"],
+        "base_price": 106100,
+        "max_price": 350000,
+        "specifications": {
+            "acceleration": "0-60 mph in 3.2 seconds",
+            "top_speed": "205 mph",
+            "horsepower": "385 hp",
+            "transmission": "8-speed PDK",
+            "drivetrain": "Rear-wheel drive"
+        },
+        "features": [
+            "Sports Chrono Package",
+            "Porsche Active Suspension Management",
+            "Porsche Torque Vectoring Plus",
+            "LED Matrix Headlights",
+            "Sport Exhaust System"
+        ],
+        "colors": [
+            "Black",
+            "White",
+            "GT Silver Metallic",
+            "Carmine Red",
+            "Python Green",
+            "Gentian Blue Metallic"
+        ],
+        "interior_options": [
+            "Leather",
+            "Race-Tex",
+            "Carbon Fiber Trim",
+            "Sport Seats Plus",
+            "18-way Adaptive Sport Seats"
+        ]
+    },
+    "Cayenne": {
+        "description": "A luxury SUV combining performance with comfort",
+        "variants": ["Base", "S", "GTS", "Turbo", "Turbo S E-Hybrid"],
+        "base_price": 79900,
+        "max_price": 250000,
+        "specifications": {
+            "acceleration": "0-60 mph in 3.0 seconds",
+            "top_speed": "190 mph",
+            "horsepower": "541 hp",
+            "transmission": "8-speed Tiptronic S",
+            "drivetrain": "All-wheel drive"
+        },
+        "features": [
+            "Air Suspension",
+            "Porsche Dynamic Chassis Control",
+            "Off-road Package",
+            "Panoramic Roof",
+            "Burmester Sound System"
+        ],
+        "colors": [
+            "Black",
+            "White",
+            "Moonlight Blue Metallic",
+            "Mahogany Metallic",
+            "Python Green",
+            "Jet Black Metallic"
+        ],
+        "interior_options": [
+            "Leather",
+            "Suede",
+            "Carbon Fiber Trim",
+            "18-way Adaptive Sport Seats",
+            "Massage Function"
+        ]
+    },
+    "Taycan": {
+        "description": "Porsche's first all-electric sports car",
+        "variants": ["Base", "4S", "GTS", "Turbo", "Turbo S"],
+        "base_price": 86700,
+        "max_price": 300000,
+        "specifications": {
+            "acceleration": "0-60 mph in 2.6 seconds",
+            "top_speed": "162 mph",
+            "horsepower": "522 hp",
+            "range": "282 miles",
+            "charging": "270 kW DC fast charging"
+        },
+        "features": [
+            "Performance Battery Plus",
+            "Porsche Electric Sport Sound",
+            "Porsche Active Aerodynamics",
+            "Matrix LED Headlights",
+            "Porsche InnoDrive"
+        ],
+        "colors": [
+            "Black",
+            "White",
+            "Frozen Blue Metallic",
+            "Mamba Green Metallic",
+            "Neptune Blue",
+            "Ice Grey Metallic"
+        ],
+        "interior_options": [
+            "Leather",
+            "Race-Tex",
+            "Carbon Fiber Trim",
+            "Sport Seats Plus",
+            "Massage Function"
+        ]
+    }
+} 

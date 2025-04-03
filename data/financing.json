@@ -1,0 +1,87 @@
+{
+    "financing_options": {
+        "purchase": {
+            "terms": ["36 months", "48 months", "60 months", "72 months"],
+            "down_payment": "10% minimum",
+            "interest_rates": {
+                "36_months": "3.99%",
+                "48_months": "4.49%",
+                "60_months": "4.99%",
+                "72_months": "5.49%"
+            }
+        },
+        "lease": {
+            "terms": ["36 months", "39 months", "42 months"],
+            "down_payment": "First month's payment + fees",
+            "mileage_options": ["7,500", "10,000", "12,000", "15,000"],
+            "monthly_payments": {
+                "911": {
+                    "base": "$1,499",
+                    "4S": "$1,799",
+                    "Turbo": "$2,299"
+                },
+                "Cayenne": {
+                    "base": "$1,199",
+                    "S": "$1,499",
+                    "Turbo": "$1,999"
+                },
+                "Taycan": {
+                    "base": "$1,399",
+                    "4S": "$1,699",
+                    "Turbo": "$2,199"
+                }
+            }
+        }
+    },
+    "promotions": {
+        "current_offers": [
+            {
+                "model": "911",
+                "offer": "0.9% APR for 60 months",
+                "valid_until": "2024-12-31",
+                "terms": "On approved credit"
+            },
+            {
+                "model": "Taycan",
+                "offer": "$7,500 Federal Tax Credit",
+                "valid_until": "2024-12-31",
+                "terms": "Subject to eligibility"
+            }
+        ],
+        "loyalty_program": {
+            "name": "Porsche Club",
+            "benefits": [
+                "Exclusive events",
+                "Priority service",
+                "Special financing rates",
+                "Track day access"
+            ],
+            "requirements": "Porsche vehicle ownership"
+        },
+        "limited_editions": [
+            {
+                "model": "911 GT3 RS",
+                "description": "Limited production track-focused variant",
+                "availability": "By invitation only"
+            }
+        ]
+    },
+    "trade_in": {
+        "process": [
+            "Online valuation",
+            "In-person inspection",
+            "Final offer",
+            "Documentation"
+        ],
+        "requirements": [
+            "Vehicle title",
+            "Service history",
+            "Vehicle condition report"
+        ],
+        "benefits": [
+            "Tax savings",
+            "Convenient process",
+            "Competitive offers"
+        ]
+    }
+} 

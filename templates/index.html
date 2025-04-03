@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Porsche QA Chatbot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: #000;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .chat-container {
+            flex: 1;
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 0.8rem 1rem;
+            border-radius: 15px;
+            margin: 0.2rem 0;
+        }
+
+        .user-message {
+            align-items: flex-end;
+        }
+
+        .user-message .message-content {
+            background: #000;
+            color: white;
+        }
+
+        .bot-message {
+            align-items: flex-start;
+        }
+
+        .bot-message .message-content {
+            background: #f0f2f5;
+            color: #000;
+        }
+
+        .timestamp {
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 0.2rem;
+        }
+
+        .related-questions {
+            margin-top: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .related-question {
+            background: #e9ecef;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .related-question:hover {
+            background: #dee2e6;
+        }
+
+        .input-container {
+            padding: 1rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        #send-button {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        #send-button:hover {
+            background: #333;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 0.8rem 1rem;
+            background: #f0f2f5;
+            border-radius: 15px;
+            margin: 0.2rem 0;
+            max-width: 70%;
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #666;
+            border-radius: 50%;
+            margin-right: 5px;
+            animation: typing 1s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .feedback-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .feedback-button {
+            padding: 0.3rem 0.8rem;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.3s;
+        }
+
+        .feedback-helpful {
+            background: #28a745;
+            color: white;
+        }
+
+        .feedback-not-helpful {
+            background: #dc3545;
+            color: white;
+        }
+
+        .confidence-indicator {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.2rem;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            margin-top: 0.2rem;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: #28a745;
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        .clarification-request {
+            background: #fff3cd;
+            color: #856404;
+            padding: 0.5rem;
+            border-radius: 5px;
+            margin-top: 0.5rem;
+        }
+
+        .intent-info {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .entity-tag {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            margin: 0.2rem;
+            background: #e9ecef;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: #495057;
+        }
+
+        .entity-type {
+            font-weight: 500;
+            color: #000;
+        }
+
+        .name-prompt {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .name-prompt-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .name-input {
+            padding: 0.5rem;
+            margin: 1rem 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .name-submit {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Enhanced Porsche QA Chatbot</h1>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+            <div class="message bot-message">
+                <div class="message-content">
+                    Hello! I'm your enhanced Porsche QA assistant. How can I help you today?
+                </div>
+                <div class="timestamp" id="bot-timestamp"></div>
+                <div class="related-questions">
+                    <div class="related-question">What models does Porsche offer?</div>
+                    <div class="related-question">What is the price range?</div>
+                    <div class="related-question">Where can I find a dealership?</div>
+                </div>
+            </div>
+            <div class="typing-indicator" id="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Ask a question about Porsche..." autocomplete="off">
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+
+    <div class="name-prompt" id="name-prompt">
+        <div class="name-prompt-content">
+            <h2>Welcome!</h2>
+            <p>Please enter your name to personalize the experience:</p>
+            <input type="text" id="name-input" class="name-input" placeholder="Your name">
+            <button id="name-submit" class="name-submit">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const typingIndicator = document.getElementById('typing-indicator');
+        const namePrompt = document.getElementById('name-prompt');
+        const nameInput = document.getElementById('name-input');
+        const nameSubmit = document.getElementById('name-submit');
+
+        // Handle name submission
+        nameSubmit.addEventListener('click', async () => {
+            const name = nameInput.value.trim();
+            if (name) {
+                try {
+                    const response = await fetch('/set_name', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ name }),
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        namePrompt.style.display = 'none';
+                        addMessage(`Hello ${name}! How can I help you today?`, false);
+                    }
+                } catch (error) {
+                    console.error('Error setting name:', error);
+                }
+            }
+        });
+
+        function addMessage(message, isUser = false, relatedQuestions = [], confidence = 1, needsClarification = false, intent = null, intentConfidence = 0, entities = []) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = message;
+            
+            const timestampDiv = document.createElement('div');
+            timestampDiv.className = 'timestamp';
+            timestampDiv.textContent = new Date().toLocaleTimeString();
+            
+            messageDiv.appendChild(contentDiv);
+            messageDiv.appendChild(timestampDiv);
+
+            if (!isUser) {
+                // Add confidence indicator
+                const confidenceDiv = document.createElement('div');
+                confidenceDiv.className = 'confidence-indicator';
+                confidenceDiv.textContent = `Confidence: ${Math.round(confidence * 100)}%`;
+                
+                const confidenceBar = document.createElement('div');
+                confidenceBar.className = 'confidence-bar';
+                const confidenceFill = document.createElement('div');
+                confidenceFill.className = 'confidence-fill';
+                confidenceFill.style.width = `${confidence * 100}%`;
+                confidenceBar.appendChild(confidenceFill);
+                
+                messageDiv.appendChild(confidenceDiv);
+                messageDiv.appendChild(confidenceBar);
+
+                // Add intent information
+                if (intent) {
+                    const intentDiv = document.createElement('div');
+                    intentDiv.className = 'intent-info';
+                    intentDiv.textContent = `Intent: ${intent.replace('_', ' ').toUpperCase()} (${Math.round(intentConfidence * 100)}% confidence)`;
+                    messageDiv.appendChild(intentDiv);
+                }
+
+                // Add entity tags
+                if (entities && entities.length > 0) {
+                    const entitiesDiv = document.createElement('div');
+                    entitiesDiv.className = 'entities';
+                    entities.forEach(entity => {
+                        const entityTag = document.createElement('span');
+                        entityTag.className = 'entity-tag';
+                        entityTag.innerHTML = `<span class="entity-type">${entity.type}</span>: ${entity.text}`;
+                        entitiesDiv.appendChild(entityTag);
+                    });
+                    messageDiv.appendChild(entitiesDiv);
+                }
+
+                // Add clarification request if needed
+                if (needsClarification) {
+                    const clarificationDiv = document.createElement('div');
+                    clarificationDiv.className = 'clarification-request';
+                    clarificationDiv.textContent = 'Please provide more details to help me better understand your question.';
+                    messageDiv.appendChild(clarificationDiv);
+                }
+
+                // Add feedback buttons
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.className = 'feedback-buttons';
+                
+                const helpfulButton = document.createElement('button');
+                helpfulButton.className = 'feedback-button feedback-helpful';
+                helpfulButton.textContent = 'Helpful';
+                helpfulButton.onclick = () => sendFeedback('helpful', message);
+                
+                const notHelpfulButton = document.createElement('button');
+                notHelpfulButton.className = 'feedback-button feedback-not-helpful';
+                notHelpfulButton.textContent = 'Not Helpful';
+                notHelpfulButton.onclick = () => sendFeedback('not_helpful', message);
+                
+                feedbackDiv.appendChild(helpfulButton);
+                feedbackDiv.appendChild(notHelpfulButton);
+                messageDiv.appendChild(feedbackDiv);
+
+                if (relatedQuestions.length > 0) {
+                    const relatedQuestionsDiv = document.createElement('div');
+                    relatedQuestionsDiv.className = 'related-questions';
+                    relatedQuestions.forEach(question => {
+                        const questionDiv = document.createElement('div');
+                        questionDiv.className = 'related-question';
+                        questionDiv.textContent = question;
+                        questionDiv.addEventListener('click', () => {
+                            userInput.value = question;
+                            sendMessage();
+                        });
+                        relatedQuestionsDiv.appendChild(questionDiv);
+                    });
+                    messageDiv.appendChild(relatedQuestionsDiv);
+                }
+            }
+            
+            chatMessages.insertBefore(messageDiv, typingIndicator);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function sendFeedback(feedback, message) {
+            try {
+                await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        message: message,
+                        feedback: feedback
+                    }),
+                });
+            } catch (error) {
+                console.error('Error sending feedback:', error);
+            }
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            // Add user message to chat
+            addMessage(message, true);
+            userInput.value = '';
+
+            // Show typing indicator
+            typingIndicator.style.display = 'block';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message }),
+                });
+
+                const data = await response.json();
+                
+                // Hide typing indicator
+                typingIndicator.style.display = 'none';
+                
+                // Add bot response to chat
+                addMessage(
+                    data.response, 
+                    false, 
+                    data.related_questions,
+                    data.confidence,
+                    data.needs_clarification,
+                    data.intent,
+                    data.intent_confidence,
+                    data.entities
+                );
+            } catch (error) {
+                console.error('Error:', error);
+                typingIndicator.style.display = 'none';
+                addMessage('Sorry, I encountered an error. Please try again.');
+            }
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html> 

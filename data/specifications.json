@@ -1,0 +1,18 @@
+{
+    "What is the top speed of the Porsche 911?": {
+        "answer": "The Porsche 911 can reach a top speed of 205 mph (330 km/h) depending on the model. The GT3 RS can reach up to 184 mph, while the Turbo S can reach 205 mph.",
+        "related_questions": [
+            "What is the acceleration time?",
+            "What is the horsepower?",
+            "What is the torque?"
+        ]
+    },
+    "What is the acceleration time of a Porsche 911?": {
+        "answer": "The Porsche 911 can accelerate from 0 to 60 mph in as little as 2.8 seconds (Turbo S model), while the base model achieves it in 4.2 seconds. The GT3 RS achieves 0-60 mph in 3.2 seconds.",
+        "related_questions": [
+            "What is the top speed?",
+            "What is the horsepower?",
+            "What is the torque?"
+        ]
+    }
+} 
