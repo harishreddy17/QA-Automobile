@@ -568,18 +568,23 @@ class EnhancedChatbotV2:
         # Calculate confidence
         confidence = self._get_response_confidence(user_input, best_match, similarity)
         
-        # Handle ambiguous queries
-        if confidence < 0.4 or intent_confidence < 0.3:
+        # Handle ambiguous queries with lower threshold
+        if confidence < 0.2 or intent_confidence < 0.1:
             return self._handle_ambiguous_query(user_input)
         
         # Get base response
-        if similarity < 0.5:
-            response = "I apologize, but I don't have specific information about that. Could you please rephrase your question or ask about something else related to Porsche vehicles?"
-            related_questions = [
-                "What models does Porsche offer?",
-                "What is the price range?",
-                "Where can I find a dealership?"
-            ]
+        if similarity < 0.3:
+            # Try to generate a response based on intent and entities
+            response = self._generate_response_from_intent(intent, entities)
+            if response:
+                related_questions = self._get_related_questions(intent, entities)
+            else:
+                response = "I apologize, but I don't have specific information about that. Could you please rephrase your question or ask about something else related to Porsche vehicles?"
+                related_questions = [
+                    "What models does Porsche offer?",
+                    "What is the price range?",
+                    "Where can I find a dealership?"
+                ]
         else:
             response = self.qa_data[best_match]["answer"]
             related_questions = self.qa_data[best_match]["related_questions"]
@@ -600,7 +605,7 @@ class EnhancedChatbotV2:
             response = f"I'm glad you're interested! {response}"
         
         # Add confidence-based disclaimer if needed
-        if confidence < 0.6:
+        if confidence < 0.4:
             response = "I'm not entirely sure about that, but based on what I know: " + response
         
         # Translate response if needed
@@ -623,6 +628,71 @@ class EnhancedChatbotV2:
             "intent_confidence": intent_confidence,
             "entities": entities
         }
+
+    def _generate_response_from_intent(self, intent: str, entities: List[Dict]) -> Optional[str]:
+        """Generate response based on intent and entities"""
+        if not entities:
+            return None
+            
+        # Extract relevant information based on intent
+        if intent == "general_inquiry":
+            model = next((e["text"] for e in entities if e["type"] == "model"), None)
+            if model:
+                model_info = self._get_model_info(model)
+                if model_info:
+                    return f"The {model} is {model_info.get('description', 'a Porsche model')}. Key features include {', '.join(model_info.get('features', []))}."
+        
+        elif intent == "pricing_finance_query":
+            model = next((e["text"] for e in entities if e["type"] == "model"), None)
+            if model:
+                model_info = self._get_model_info(model)
+                if model_info and 'pricing' in model_info:
+                    return f"The {model} starts at ${model_info['pricing']['base_price']} and can go up to ${model_info['pricing']['max_price']} with options."
+        
+        elif intent == "test_drive_query":
+            location = next((e["text"] for e in entities if e["type"] == "location"), None)
+            if location:
+                dealer_info = self._get_dealership_info(location)
+                if dealer_info:
+                    return f"You can schedule a test drive at the Porsche dealership in {location}. They are located at {dealer_info.get('address', '')}. Phone: {dealer_info.get('phone', '')}"
+        
+        return None
+
+    def _get_related_questions(self, intent: str, entities: List[Dict]) -> List[str]:
+        """Get related questions based on intent and entities"""
+        model = next((e["text"] for e in entities if e["type"] == "model"), None)
+        
+        if intent == "general_inquiry":
+            if model:
+                return [
+                    f"What is the price of the {model}?",
+                    f"What are the specifications of the {model}?",
+                    f"Where can I test drive the {model}?"
+                ]
+            return [
+                "What models does Porsche offer?",
+                "What is the price range?",
+                "Where can I find a dealership?"
+            ]
+        
+        elif intent == "pricing_finance_query":
+            if model:
+                return [
+                    f"What financing options are available for the {model}?",
+                    f"What is included in the base price of the {model}?",
+                    f"Are there any current promotions for the {model}?"
+                ]
+            return [
+                "What financing options does Porsche offer?",
+                "What is the minimum down payment required?",
+                "What are the current interest rates?"
+            ]
+        
+        return [
+            "What models does Porsche offer?",
+            "What is the price range?",
+            "Where can I find a dealership?"
+        ]
 
     def _load_qa_data(self) -> Dict:
         """Load QA data from all JSON files"""
