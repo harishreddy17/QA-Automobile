@@ -59,6 +59,12 @@ class EnhancedChatbotV2:
         self.dealerships_data = self._load_json('data/dealerships.json')
         self.financing_data = self._load_json('data/financing.json')
         
+        # Initialize QA data and embeddings
+        self.qa_data = self._load_qa_data()
+        self.question_embeddings = {}
+        self._create_question_embeddings()
+        self.bow_features = self._create_bow_features()
+        
         # Define intents and their patterns
         self.intents = {
             "general_inquiry": {
@@ -616,4 +622,106 @@ class EnhancedChatbotV2:
             "intent": intent,
             "intent_confidence": intent_confidence,
             "entities": entities
-        } 
+        }
+
+    def _load_qa_data(self) -> Dict:
+        """Load QA data from all JSON files"""
+        qa_data = {}
+        
+        # Load model information
+        for model, info in self.models_data.items():
+            qa_data.update(self._create_model_qa(model, info))
+        
+        # Load dealership information
+        for dealer in self.dealerships_data.get('dealerships', []):
+            qa_data.update(self._create_dealership_qa(dealer))
+        
+        # Load financing information
+        qa_data.update(self._create_financing_qa())
+        
+        return qa_data
+
+    def _create_model_qa(self, model: str, info: Dict) -> Dict:
+        """Create QA pairs for model information"""
+        qa_pairs = {}
+        
+        # Basic model information
+        qa_pairs[f"What is the {model}?"] = {
+            "answer": f"The {model} is {info.get('description', 'a Porsche model')}. Key features include {', '.join(info.get('features', []))}.",
+            "related_questions": [
+                f"What is the price of the {model}?",
+                f"What are the specifications of the {model}?",
+                f"Where can I test drive the {model}?"
+            ]
+        }
+        
+        # Price information
+        if 'pricing' in info:
+            qa_pairs[f"What is the price of the {model}?"] = {
+                "answer": f"The {model} starts at ${info['pricing']['base_price']} and can go up to ${info['pricing']['max_price']} with options.",
+                "related_questions": [
+                    f"What financing options are available for the {model}?",
+                    f"What is included in the base price of the {model}?",
+                    f"Are there any current promotions for the {model}?"
+                ]
+            }
+        
+        # Specifications
+        if 'specifications' in info:
+            qa_pairs[f"What are the specifications of the {model}?"] = {
+                "answer": f"The {model} specifications include: {', '.join([f'{k}: {v}' for k, v in info['specifications'].items()])}.",
+                "related_questions": [
+                    f"How does the {model} perform?",
+                    f"What is the fuel efficiency of the {model}?",
+                    f"What is the top speed of the {model}?"
+                ]
+            }
+        
+        return qa_pairs
+
+    def _create_dealership_qa(self, dealer: Dict) -> Dict:
+        """Create QA pairs for dealership information"""
+        qa_pairs = {}
+        
+        location = dealer.get('location', '')
+        qa_pairs[f"Where is the Porsche dealership in {location}?"] = {
+            "answer": f"The Porsche dealership in {location} is located at {dealer.get('address', '')}. Phone: {dealer.get('phone', '')}",
+            "related_questions": [
+                f"What are the hours of the {location} dealership?",
+                f"What services are available at the {location} dealership?",
+                "How do I schedule a test drive?"
+            ]
+        }
+        
+        return qa_pairs
+
+    def _create_financing_qa(self) -> Dict:
+        """Create QA pairs for financing information"""
+        qa_pairs = {}
+        
+        # Financing options
+        qa_pairs["What financing options does Porsche offer?"] = {
+            "answer": "Porsche offers various financing options including purchase and lease options. For purchase, terms range from 36 to 72 months with competitive interest rates. For leasing, terms are available from 36 to 42 months with different mileage options.",
+            "related_questions": [
+                "What is the minimum down payment required?",
+                "What are the current interest rates?",
+                "What is the process for financing a Porsche?"
+            ]
+        }
+        
+        # Current promotions
+        qa_pairs["Are there any current promotions?"] = {
+            "answer": "Current promotions include special APR offers on select models and loyalty program benefits. Please contact your local dealership for the most up-to-date information.",
+            "related_questions": [
+                "What is the Porsche loyalty program?",
+                "Are there any seasonal offers?",
+                "What are the terms of the current promotions?"
+            ]
+        }
+        
+        return qa_pairs
+
+    def _create_question_embeddings(self) -> None:
+        """Create BERT embeddings for all questions in QA data"""
+        for question in self.qa_data.keys():
+            self.question_embeddings[question] = self._get_bert_embedding(question) 
