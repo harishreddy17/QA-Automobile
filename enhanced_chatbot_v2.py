@@ -421,6 +421,21 @@ class EnhancedChatbotV2:
         query_vector = self.tfidf_vectorizer.transform([processed_query])
         return cosine_similarity(query_vector, self.bow_features)[0]
 
+    def _get_bert_embedding(self, text: str) -> torch.Tensor:
+        """Get BERT embedding for input text"""
+        # Tokenize the text
+        inputs = self.tokenizer(text, return_tensors="pt", padding=True, truncation=True, max_length=512)
+        
+        # Get BERT embeddings
+        with torch.no_grad():
+            outputs = self.bert_model(**inputs)
+            
+        # Use the [CLS] token embedding as the sentence representation
+        embeddings = outputs.last_hidden_state[:, 0, :]
+        
+        # Convert to numpy array for similarity calculation
+        return embeddings.numpy()
+
     def _find_best_match(self, query_embedding: torch.Tensor, query: str) -> Tuple[str, float]:
         """Find best matching question using combined similarity scores"""
         best_similarity = -1
